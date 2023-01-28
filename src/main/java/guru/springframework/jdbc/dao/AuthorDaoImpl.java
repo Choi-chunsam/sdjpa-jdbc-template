@@ -22,9 +22,12 @@ public class AuthorDaoImpl implements AuthorDao {
 
     @Override
     public Author getById(Long id) {
+        String sql = "select author.id as id, first_name, last_name, book.id as book_id, book.isbn, book.publisher, book.title from author\n" +
+                "left outer join book on author.id = book.author_id where author.id = ?";
+
         //queryForObject는 오버로드된 것이다 우리가 다룰 수 있는 방법이 다양하다.
         // 나는 RowMapper를 넘기고 그런 다음 이 경우 바인드 매개변수 목록을 가져옵니다.
-        return jdbcTemplate.queryForObject("select * from author where id = ?",getRowMapper(),id);
+        return jdbcTemplate.query(sql,new AuthorExtractor(),id);
     }
 
     @Override
